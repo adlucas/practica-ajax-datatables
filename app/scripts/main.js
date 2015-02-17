@@ -41,7 +41,7 @@
                /*añadimos las clases editarbtn y borrarbtn para procesar los eventos click de los botones. No lo hacemos mediante id ya que habrá más de un
                botón de edición o borrado*/
                'render': function(data) {
-                   return '<a class="btn btn-primary editarbtn" href=http://localhost/php/editar.php?id_clinica=' + data + '>Editar</a><a class="btn btn-warning borrarbtn" href=http://localhost/php/borrar.php?id_clinica=' + data + '>Borrar</a>';
+                   return '<a class="btn btn-primary editarbtn" href=http://localhost/php/editar.php?id_doctor=' + data + '>Editar</a><a class="btn btn-warning borrarbtn" href=http://localhost/php/borrar.php?id_doctor=' + data + '>Borrar</a>';
                }
            }]
        });
@@ -55,21 +55,11 @@
 
            var nRow = $(this).parents('tr')[0];
            var aData = miTabla.row(nRow).data();
-           $('#idClinica').val(aData.idClinica);
+           $('#idDoctor').val(aData.idDoctor);
            $('#nombre').val(aData.nombre);
-           $('#numClinica').val(aData.numClinica);
-           $('#razonSocial').val(aData.razonSocial);
-           $('#cif').val(aData.cif);
-           $('#localidad').val(aData.localidad);
-           /*lo más cómodo para la provincia sería esto: (hemos convertido los values a mayúsculas mediante multicursor y CTRL + K + U (Sublime)*/
-           $('#provincia').val(aData.provincia);
-           /*Como hemos cambiado las option del select, más cómodo también para el envío de datos, esto que teníamos lo comentamos:*/
-           /*$('#provincia option').filter(function() {
-               return this.text.toLowerCase() === aData.provincia.toLowerCase();
-           }).attr('selected', true);*/
-           $('#id_tarifa').val(aData.idTarifa);
-           $('#direccion').val(aData.direccion);
-           $('#cp').val(aData.cp);
+           $('#numcolegiado').val(aData.numcolegiado);
+           $('#clinicas').val(aData.nombreClinica);
+           
        });
 
 

@@ -34,25 +34,18 @@ mysql_query('SET names utf8');
  * Get data to display
  */
 
-$id = $_POST["id_clinica"];
+$id = $_POST["id_doctor"];
 $nombre = $_POST["nombre"];
-$localidad = $_POST["localidad"];
-$provincia = $_POST["provincia"];
-$direccion = $_POST["direccion"];
-$cp = $_POST["cp"];
-$id_tarifa = $_POST["id_tarifa"];
-$cif = $_POST["cif"];
+$numcolegiado = $_POST["numcolegiado"];
+$nombre_clinica = $_POST["nombre_clinica"];
+$id_clinica = $_POST["id_clinica"];
 
+echo "$id nombre= $nombre colegiado= $numcolegiado";
 /* Consulta UPDATE */
-$query = "UPDATE clinicas SET 
+$query = "UPDATE doctores SET 
             nombre = '" . $nombre . "', 
-            localidad = '" . $localidad . "', 
-            provincia = '" . $provincia . "', 
-            direccion = '" . $direccion . "', 
-            cp = '" . $cp . "',
-            id_tarifa = '" . $id_tarifa . "',
-            cif = '" . $cif . "'
-            WHERE id_clinica = " . $id;
+            numcolegiado = '" . $numcolegiado . "' 
+            WHERE id_doctor = '" . $id."'";
 
 //mysql_query($query, $gaSql['link']) or fatal_error('MySQL Error: ' . mysql_errno());
 /*En función del resultado correcto o no, mostraremos el mensaje que corresponda*/
