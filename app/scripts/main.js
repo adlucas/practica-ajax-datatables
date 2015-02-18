@@ -33,7 +33,7 @@
            }, {
                'data': 'numcolegiado'
            }, {
-               'data': 'nombreClinica'
+               'data': 'nombreClinica',
            }, {
                'data': 'idClinica'
            }, {
@@ -41,7 +41,7 @@
                /*añadimos las clases editarbtn y borrarbtn para procesar los eventos click de los botones. No lo hacemos mediante id ya que habrá más de un
                botón de edición o borrado*/
                'render': function(data) {
-                   return '<a class="btn btn-primary editarbtn" href=http://localhost/php/editar.php?id_doctor=' + data + '>Editar</a><a class="btn btn-warning borrarbtn" href=http://localhost/php/borrar.php?id_doctor=' + data + '>Borrar</a>';
+                   return '<a class="btn btn-primary editarbtn" href=http://localhost/php/editar.php?id_doctor=' + data + '>Editar</a><a class="btn btn-warning borrarbtn" href=http://localhost/php/borrar_doctor.php?id_doctor=' + data + '>Borrar</a>';
                }
            }]
        });
@@ -67,17 +67,17 @@
            e.preventDefault();
            var nRow = $(this).parents('tr')[0];
            var aData = miTabla.row(nRow).data();
-           var idClinica = aData.idClinica;
+           var idDoctor = aData.idDoctor;
 
 
            $.ajax({
                /*en principio el type para api restful sería delete pero no lo recogeríamos en $_REQUEST, así que queda como POST*/
                type: 'POST',
                dataType: 'json',
-               url: 'php/borrar_clinica.php',
+               url: 'php/borrar_doctor.php',
                //estos son los datos que queremos actualizar, en json:
                data: {
-                   id_clinica: idClinica
+                   id_doctor: idDoctor
                },
                error: function(xhr, status, error) {
                    //mostraríamos alguna ventana de alerta con el error
@@ -97,14 +97,10 @@
        });
        $('#enviar').click(function(e) {
            e.preventDefault();
-           idClinica = $('#idClinica').val();
+           idDoctor = $('#idDoctor').val();
            nombre = $('#nombre').val();
-           localidad = $('#localidad').val();
-           provincia = $('#provincia').val();
-           direccion = $('#direccion').val();
-           cif = $('#cif').val();
-           cp = $('#cp').val();
-           id_tarifa = $('#id_tarifa').val();
+           numcolegiado = $('#numcolegiado').val();
+          
 
            $.ajax({
                type: 'POST',
@@ -115,14 +111,10 @@
                //pero como el php tiene otros nombres de variables, lo dejo así
                //estos son los datos que queremos actualizar, en json:
                data: {
-                   id_clinica: idClinica,
+                   idDoctor: idDoctor,
                    nombre: nombre,
-                   localidad: localidad,
-                   provincia: provincia,
-                   direccion: direccion,
-                   cp: cp,
-                   id_tarifa: id_tarifa,
-                   cif: cif
+                   numcolegiado: numcolegiado
+                   
                },
                error: function(xhr, status, error) {
                    //mostraríamos alguna ventana de alerta con el error
@@ -156,10 +148,10 @@
                    //mostraríamos alguna ventana de alerta con el error
                },
                success: function(data) {
-                   $('#id_tarifa').empty();
+                   $('#clinicas').empty();
                    $.each(data, function() {
-                       $('#id_tarifa').append(
-                           $('<option></option>').val(this.id_tarifa).html(this.nombre)
+                       $('#clinicas').append(
+                           $('<option></option>').val(this.id_clinica).html(this.nombre)
                        );
                    });
                },
