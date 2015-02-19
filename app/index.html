@@ -21,9 +21,38 @@
 
 <body>
     <div class="container-fluid">
+
+
+
+       
+
+        
+
+    
+
+
         <div id="tabla" class="row">
             <div class="col-md-12">
                 <table id="miTabla" class="table">
+                <!--cabecera de la pagina, titulo e icono-->
+                 <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#">
+                <img id="imgDiente" class="img-responsive" alt="Laboratorio" src="images/diente.png">
+              </a>
+              <p class="navbar-text"><strong>Laboratorio dental</p>
+
+            </div>
+          </div>
+        </nav>
+
+        <div id="edicionok" class="alert alert-success" role="alert">Edicion correta!</div>
+    <div id="edicionerr" class="alert alert-danger" role="alert">Edicion erronea!</div>
+
+                <!--boton añadir doctor-->
+                <button type="button" class="btn btn-success navbar-btn">Añadir doctor</button><br><br>
+                <!--tabla-->
                     <thead>
                         <th>Nombre doctor</th>
                         <th>Numero de colegiado</th>
@@ -43,16 +72,44 @@
                 </table>
 
             </div>
+
+
         </div>
+
+
+
+ 
+
+        <!--
+        <div id="example" class="modal" >
+            <div class="modal-header">
+                <a data-dismiss="modal" class="close">×</a>
+                <h3>Cabecera de la ventana</h3>
+             </div>
+             <div class="modal-body">
+                 <h4>Texto de la ventana</h4>
+                <p>Mas texto en la ventana.</p>                
+            </div>
+            <div class="modal-footer">
+                <a href="index.html" class="btn btn-success">Guardar</a>
+                <a href="#" data-dismiss="modal" class="btn">Cerrar</a>
+            </div>
+        </div>
+
+        -->
+
+        <!-- Formulario boton editar
+        -->
         <div id="formulario" class="row">
             <div class="col-md-4 col-md-offset-3">
                 <!--/*el formulario es aproximadamente un copy-paste de http://getbootstrap.com/css/#forms -->
                 <form class="form-horizontal">
                     <div>
+                    <h2>Editar doctor</h2>
                         <div class="form-group">
                             <label for="idDoctor" class="col-sm-2 control-label">Identificador Doctor</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="idDoctor">
+                                <input disabled="true" type="text" class="form-control" id="idDoctor">
                             </div>
                         </div>
                         <div class="form-group">
@@ -87,10 +144,16 @@
 
             </div>
         </div>
+
+
+        <!-- formulario boton añadir doctor
+        -->
+        
+
     </div>
 
+  
 
-    
 
 
 
@@ -103,6 +166,8 @@
     <!-- build:js({app,.tmp}) scripts/main.js -->
     <script src="scripts/jquery.dataTables.js"></script>
     <script src="scripts/dataTables.bootstrap.js"></script>
+    <script src="scripts/smodal.js"></script>
+
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
 
