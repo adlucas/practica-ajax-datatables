@@ -51,7 +51,7 @@
     <div id="edicionerr" class="alert alert-danger" role="alert">Edicion erronea!</div>
 
                 <!--boton añadir doctor-->
-                <button type="button" class="btn btn-success navbar-btn">Añadir doctor</button><br><br>
+                <button id="creaDoc" type="button" class="btn btn-success navbar-btn">Añadir doctor</button><br><br>
                 <!--tabla-->
                     <thead>
                         <th>Nombre doctor</th>
@@ -103,19 +103,19 @@
         <div id="formulario" class="row">
             <div class="col-md-4 col-md-offset-3">
                 <!--/*el formulario es aproximadamente un copy-paste de http://getbootstrap.com/css/#forms -->
-                <form class="form-horizontal">
+                <form class="form-horizontal" id="formEditar" action="" method="post" >
                     <div>
                     <h2>Editar doctor</h2>
                         <div class="form-group">
-                            <label for="idDoctor" class="col-sm-2 control-label">Identificador Doctor</label>
+                            <label for="idDoctor" class="col-sm-2 control-label">Identificador Doctor:</label>
                             <div class="col-sm-10">
                                 <input disabled="true" type="text" class="form-control" id="idDoctor">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="nombre" class="col-sm-2 control-label">Nombre</label>
+                            <label for="nombre" class="col-sm-2 control-label">Nombre:*</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="nombre" placeholder="Nombre de la clínica">
+                                <input type="text" class="form-control" id="nombre" required name="nombre" placeholder="Nombre del doctor">
                             </div>
                         </div>
                         <div class="form-group">
@@ -127,7 +127,7 @@
                         <div class="form-group">
                             <label for="clinicas" class="col-sm-2 control-label">Nombre clinicas:</label>
                             <div class="col-sm-10">
-                                <select  multiple id="clinicas">
+                                <select  multiple id="clinicas"  >
                                   
                                 </select>
                             </div>
@@ -136,6 +136,7 @@
                         <div class="form-group">
                             <div class="col-sm-10 col-sm-offset-2">
                                 <button id="enviar" type="submit" class="btn btn-primary">Enviar</button>
+                                <button id="cancelar" type="submit" class="btn btn-danger">Cancelar</button>
                             </div>
                         </div>
 
@@ -146,9 +147,49 @@
         </div>
 
 
+
         <!-- formulario boton añadir doctor
         -->
-        
+        <div id="formularioCrear" class="row">
+            <div class="col-md-4 col-md-offset-3">
+                <!--/*el formulario es aproximadamente un copy-paste de http://getbootstrap.com/css/#forms -->
+                <form class="form-horizontal" id="formCrear" action="" method="post" >
+                    <div>
+                    <h2>Añadir nuevo doctor</h2>
+                        
+                        <div class="form-group">
+                            <label for="nombre" class="col-sm-2 control-label">Nombre:*</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="nombreNuevo" required  placeholder="Nombre del doctor">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="numcolegiado" class="col-sm-2 control-label">Nº Colegiado</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="numcolegiadoNuevo" required placeholder="Número de colegiado">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="clinicas2" class="col-sm-2 control-label">Nombre clinicas:</label>
+                            <div class="col-sm-10">
+                                <select  multiple id="clinicas2"  >
+                                  
+                                </select>
+                            </div>
+                        </div>
+                       
+                        <div class="form-group">
+                            <div class="col-sm-10 col-sm-offset-2">
+                                <button id="enviarDoc" type="submit" class="btn btn-primary">Enviar</button>
+                                <button id="cancelarDoc" type="submit" class="btn btn-danger">Cancelar</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
 
     </div>
 
@@ -160,6 +201,8 @@
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/bootstrap.growl/bootstrap-growl.js"></script>
+    <script src="bower_components/jquery-validate/dist/jquery.validate.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -167,6 +210,8 @@
     <script src="scripts/jquery.dataTables.js"></script>
     <script src="scripts/dataTables.bootstrap.js"></script>
     <script src="scripts/smodal.js"></script>
+    <script src="scripts/messages_es.js"></script>
+    
 
     <script src="scripts/main.js"></script>
     <!-- endbuild -->

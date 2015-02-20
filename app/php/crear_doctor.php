@@ -34,27 +34,44 @@ mysql_query('SET names utf8');
  * Get data to display
  */
 
-$id = $_POST["idDoctor"];
-$nombre = $_POST["nombre"];
-$numcolegiado = $_POST["numcolegiado"];
-$clinicas = $_POST["id_clinica"];
+$nombre = $_POST["nombreNuevo"];
+$numcolegiado = $_POST["numcolegiadoNuevo"];
+$clinicas = $_POST["clinicas2"];
 
 
 //echo "id=$id nombre= $nombre colegiado= $numcolegiado clinicas= $clinicas";
-if($clinicas){
-$query = "delete from clinica_doctor where id_doctor=" . $id;
-$query_res = mysql_query($query);
-}
 
 //echo"$query <br>";
 
+$query1 = "insert into doctores (nombre,numcolegiado) values( 
+             '". $nombre . "', 
+            '" . $numcolegiado . "')" ;
 
+//echo"$query1 <br>";
+
+$query_res1 = mysql_query($query1);
+
+
+
+
+$sql = "SELECT id_doctor
+        FROM doctores
+        where numcolegiado='".$numcolegiado."'";
+
+//echo "$sql <br>";
+$res = mysql_query($sql);
+
+while($row = mysql_fetch_array($res, MYSQL_ASSOC))
+{
+$id_nuevo=$row['id_doctor'];
+}
+//echo "idenuevo =>  $id_nuevo";
 for ($i=0;$i<count($clinicas);$i++)    
 {     
 //echo "<br> CLinicaid " . $i . ": " . $clinicas[$i];   
 
-$query1 = "insert into clinica_doctor (id_doctor,id_clinica) values( 
-             ". $id . ", 
+$query2 = "insert into clinica_doctor (id_doctor,id_clinica) values( 
+             ". $id_nuevo . ", 
             " . $clinicas[$i] . ")" ;
 
 
@@ -62,30 +79,24 @@ $query1 = "insert into clinica_doctor (id_doctor,id_clinica) values(
 
 
 
-            $query_res = mysql_query($query1);
+            $query_res2 = mysql_query($query2);
 
 
 } 
 
-/* Consulta UPDATE */
-$query = "UPDATE doctores SET 
-            nombre = '" . $nombre . "', 
-            numcolegiado = '" . $numcolegiado . "' 
-            WHERE id_doctor = '" . $id."'";
 
-//mysql_query($query, $gaSql['link']) or fatal_error('MySQL Error: ' . mysql_errno());
-/*En función del resultado correcto o no, mostraremos el mensaje que corresponda*/
-$query_res = mysql_query($query);
 
-// Comprobar el resultado
-if (!$query_res) {
-    $mensaje  = 'Error en la consulta: ' . mysql_error() . "\n";
+
+if (!$query_res1||!$res||$query_res2) {
+    $mensaje  = 'Error en la consulta de inserts: ' . mysql_error() . "\n";
     $estado = mysql_errno();
 }
 else
 {
-    $mensaje = "Actualización correcta";
+
+    $mensaje = "Insercion correcta";
     $estado = 0;
+
 }
 $resultado = array();
  $resultado[] = array(

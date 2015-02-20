@@ -1,6 +1,34 @@
    'use strict';
+
+
+
+
+
+
    $(document).ready(function() {
-      $('#example').show();
+
+
+        $('#formEditar').validate({
+                        
+                        rules: {
+                             nombre: {
+                                required: true,
+                                lettersonly: true 
+                            }
+                          }
+                        });
+
+
+            jQuery.validator.addMethod('lettersonly', function(value, element) {
+          return this.optional(element) || /^[a-z]+$/i.test(value);
+        }, 'Introduce solo letras'); 
+
+
+/*
+     
+   */
+
+     
        var miTabla = $('#miTabla').DataTable({
            'processing': true,
            'serverSide': true,
@@ -63,6 +91,27 @@
            $('#nombre').val(aData.nombre);
            $('#numcolegiado').val(aData.numcolegiado);
            $('#clinicas').val(aData.nombreClinica);
+          // var prueba=$('#idClinica').val(aData.idDoctor);
+           cargarTarifas();
+           
+          // alert(aData.idClinica);
+          //selecciono las que estaban
+          var str = aData.idClinica;
+
+          str = str.split(",");
+
+          //cargo el select con las que ya estaban
+          $('#clinicas').val(str);
+          
+           /*
+           $('#clinicas').each(function() {
+                 str.push($(this).val());
+            });
+*/
+           // $('#clinicas').sel('2');
+          // $('#clinicas').val(aData.idDoctor);
+
+
            
        });
 
@@ -89,8 +138,17 @@
                error: function(xhr, status, error) {
                    //mostraríamos alguna ventana de alerta con el error
                    alert("Ha entrado en error");
-                $('#edicionerr').html("Error al borrar doctor!").slideDown(2000).slideUp(2000);
+               // $('#edicionerr').html("Error al borrar doctor!").slideDown(2000).slideUp(2000);
 
+
+                $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al borrar!"
+
+                },{
+                  type: "danger"
+                });
                },
                success: function(data) {
                 alert("borrado ok");
@@ -100,8 +158,15 @@
                    /*para volver a pedir vía ajax los datos de la tabla*/
                    var $mitabla =  $("#miTabla").dataTable( { bRetrieve : true } );
                   $mitabla.fnDraw();
-                   $('#edicionok').html("Borrado correcto!").slideDown(2000).slideUp(2000);
+                 //  $('#edicionok').html("Borrado correcto!").slideDown(2000).slideUp(2000);
+                $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Borrado realizado con exito!"
 
+                },{
+                  type: "danger"
+                });
                },
                complete: {
                    //si queremos hacer algo al terminar la petición ajax
@@ -109,6 +174,7 @@
            });
 
        });
+   /*boton enviar del formulario de editar*/
        $('#enviar').click(function(e) {
            e.preventDefault();
            idDoctor = $('#idDoctor').val();
@@ -139,16 +205,34 @@
 
                     alert(status);
 
-                    $('#edicionerr').slideDown(2000).slideUp(2000);
+                   // $('#edicionerr').slideDown(2000).slideUp(2000);
+
+                    $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al editar!"
+
+                },{
+                  type: "danger"
+                });
 
                },
                success: function(data) {
                   var $mitabla =  $("#miTabla").dataTable( { bRetrieve : true } );
                   $mitabla.fnDraw();
                  // alert("ok");
-           		  $('#edicionok').slideDown(2000).slideUp(2000);
+           		//  $('#edicionok').slideDown(2000).slideUp(2000);
 
-                 
+               
+               
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-ok",
+                  message: "Edicion correcta!"
+
+                },{
+                  type: "success"
+                });
 
                },
                complete: {
@@ -163,6 +247,114 @@
 
 
        });
+
+/*boton enviar del form crear doctor*/
+     $('#enviarDoc').click(function(e) {
+           e.preventDefault();
+           
+          
+            //$("#edicion").fadeOut(100);
+
+          nombreNuevo = $('#nombreNuevo').val();
+          numcolegiadoNuevo = $('#numcolegiadoNuevo').val();
+          clinicas2 = $('#clinicas2').val();
+
+           $.ajax({
+               type: 'POST',
+               dataType: 'json',
+               url: 'php/crear_doctor.php',
+               //lo más cómodo sería mandar los datos mediante 
+               //var data = $( "form" ).serialize();
+               //pero como el php tiene otros nombres de variables, lo dejo así
+               //estos son los datos que queremos actualizar, en json:
+               data: {
+                   nombreNuevo: nombreNuevo,
+                   numcolegiadoNuevo: numcolegiadoNuevo,
+                   clinicas2:clinicas2
+                   
+               },
+               error: function(xhr, status, error) {
+                   //mostraríamos alguna ventana de alerta con el error
+                    
+                    
+                   // $('#edicionerr').slideDown(2000).slideUp(2000);
+
+                    $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al editar!"
+
+                },{
+                  type: "danger"
+                });
+
+               },
+               success: function(data) {
+                  var $mitabla =  $("#miTabla").dataTable( { bRetrieve : true } );
+                  $mitabla.fnDraw();
+                 // alert("ok");
+              //  $('#edicionok').slideDown(2000).slideUp(2000);
+                /*muestro growl*/
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-ok",
+                  message: "Edicion correcta!"
+
+                },{
+                  type: "success"
+                });
+
+               },
+               complete: {
+                   //si queremos hacer algo al terminar la petición ajax
+
+               }
+           });
+          $('#formularioCrear').fadeOut(100);
+          $('#tabla').fadeIn(100);
+
+       });
+
+   /*boton añadir doctor,oculto tabla para mostrar form*/
+   $('#creaDoc').click(function(e) {
+           e.preventDefault();
+
+           //oculto tabla muestro form
+          $('#tabla').fadeOut(100);
+          $('#formularioCrear').fadeIn(100);
+          cargarClinicaCrear();
+
+       });
+
+
+ /*Cargamos los datos para las tarifas:*/
+       function cargarClinicaCrear() {
+           $.ajax({
+               type: 'POST',
+               dataType: 'json',
+               url: 'php/listar_tarifas.php',
+               async: false,
+               //estos son los datos que queremos actualizar, en json:
+               // {parametro1: valor1, parametro2, valor2, ….}
+               //data: { id_clinica: id_clinica, nombre: nombre, ….,  id_tarifa: id_tarifa },
+               error: function(xhr, status, error) {
+                   //mostraríamos alguna ventana de alerta con el error
+              
+               },
+               success: function(data) {
+                   $('#clinicas2').empty();
+                   $.each(data, function() {
+                       $('#clinicas2').append(
+                           $('<option ></option>').val(this.id_clinica).html(this.nombre)
+                       );
+                   });
+
+               },
+               complete: {
+                   //si queremos hacer algo al terminar la petición ajax
+               }
+           });
+       }
 
 
        /*Cargamos los datos para las tarifas:*/
@@ -183,7 +375,7 @@
                    $('#clinicas').empty();
                    $.each(data, function() {
                        $('#clinicas').append(
-                           $('<option></option>').val(this.id_clinica).html(this.nombre)
+                           $('<option ></option>').val(this.id_clinica).html(this.nombre)
                        );
                    });
 
@@ -193,9 +385,17 @@
                }
            });
        }
-       cargarTarifas();
+       
    });
+    
+/*
+   $('#nombre').focusout(function() {
+        var nombre= $('#nombre').val();
+             alert(nombre);
+              
 
+            });
+*/
    /* En http://www.datatables.net/reference/option/ hemos encontrado la ayuda necesaria
    para utilizar el API de datatables para el render de los botones */
    /* Para renderizar los botones según bootstrap, la url es esta: 
