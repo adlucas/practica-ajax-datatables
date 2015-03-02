@@ -52,7 +52,7 @@ $query1 = "insert into doctores (nombre,numcolegiado) values(
 $query_res1 = mysql_query($query1);
 
 
-
+if($query_res1){
 
 $sql = "SELECT id_doctor
         FROM doctores
@@ -61,9 +61,11 @@ $sql = "SELECT id_doctor
 //echo "$sql <br>";
 $res = mysql_query($sql);
 
+
 while($row = mysql_fetch_array($res, MYSQL_ASSOC))
 {
 $id_nuevo=$row['id_doctor'];
+}
 }
 //echo "idenuevo =>  $id_nuevo";
 for ($i=0;$i<count($clinicas);$i++)    
@@ -88,8 +90,17 @@ $query2 = "insert into clinica_doctor (id_doctor,id_clinica) values(
 
 
 if (!$query_res1||!$res||$query_res2) {
-    $mensaje  = 'Error en la consulta de inserts: ' . mysql_error() . "\n";
-    $estado = mysql_errno();
+   // $mensaje  = 'Error en la consulta de inserts: ' . mysql_error() . "\n";
+   // $estado = mysql_errno();
+
+
+    if (mysql_errno() == 1062) {
+        $mensaje = "Imposible añadir el doctor, num colegiado ya existe";
+        $estado = mysql_errno();
+    } else {
+        $mensaje = 'Error en la consulta: ' . mysql_error() . "\n";
+        $estado = mysql_errno();
+    }
 }
 else
 {

@@ -79,8 +79,11 @@ $query_res = mysql_query($query);
 
 // Comprobar el resultado
 if (!$query_res) {
-    $mensaje  = 'Error en la consulta: ' . mysql_error() . "\n";
+    $mensaje  = 'Error en la consulta: ' . mysql_error() ;
     $estado = mysql_errno();
+
+
+    
 }
 else
 {

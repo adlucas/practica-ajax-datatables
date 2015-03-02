@@ -1,5 +1,8 @@
    'use strict';
 
+$.validator.addMethod("lettersonly", function(value, element) {
+    return this.optional(element) || /^[a-z]+$/i.test(value);
+}, "Solo letras por favor");
 
 
 
@@ -7,21 +10,24 @@
 
    $(document).ready(function() {
 
-
+/*
         $('#formEditar').validate({
                         
                         rules: {
-                             nombre: {
+                             nombreNuevo: {
                                 required: true,
                                 lettersonly: true 
+                            },
+                            numcolegiadoNuevo: {
+                                required: true
+                                
                             }
                           }
                         });
 
+*/
 
-            jQuery.validator.addMethod('lettersonly', function(value, element) {
-          return this.optional(element) || /^[a-z]+$/i.test(value);
-        }, 'Introduce solo letras'); 
+ 
 
 
 /*
@@ -74,14 +80,17 @@
                /*añadimos las clases editarbtn y borrarbtn para procesar los eventos click de los botones. No lo hacemos mediante id ya que habrá más de un
                botón de edición o borrado*/
                'render': function(data) {
-                   return '<a class="btn btn-primary editarbtn" href=http://localhost/php/modificar_clinica.php?id_doctor=' + data + '>Editar</a><a class="btn btn-warning borrarbtn" href=http://localhost/php/borrar_doctor.php?id_doctor=' + data + '>Borrar</a>';
+                   return '<a class="btn btn-primary editarbtn" href=http://localhost/php/modificar_clinica.php?id_doctor=' + data + '>Editar</a><a data-toggle="modal" data-target="#basicModal"  class="btn btn-warning borrarbtn" href=http://localhost/php/borrar_doctor.php?id_doctor=' + data + '>Borrar</a>';
                }
            }]
        });
+
+
        /*Creamos la función que muestre el formulario cuando hagamos click*/
        /*ojo, es necesario hacerlo con el método ON. Tanto por rendimiento como porque puede haber elementos (botones) que todavía no existan en el document.ready*/
        $('#miTabla').on('click', '.editarbtn', function(e) {
            e.preventDefault();
+
            $('#tabla').fadeOut(100);
            $('#formulario').fadeIn(100);
 
@@ -117,7 +126,17 @@
 
 
        $('#miTabla').on('click', '.borrarbtn', function(e) {
-           e.preventDefault();
+           //e.preventDefault();
+
+
+           //$('#tabla').fadeOut(100);
+        //   $('#basicModal').fadeIn(100);
+           //$('#basicModal').show();
+
+
+         //    $('#basicModal').on('click', '#confBorrar', function(e) {
+             //  e.preventDefault();
+
            var nRow = $(this).parents('tr')[0];
            var aData = miTabla.row(nRow).data();
            var idDoctor = aData.idDoctor;
@@ -165,22 +184,133 @@
                   message: "Borrado realizado con exito!"
 
                 },{
-                  type: "danger"
+                  type: "success"
                 });
                },
                complete: {
                    //si queremos hacer algo al terminar la petición ajax
                }
            });
+  // });
 
        });
-   /*boton enviar del formulario de editar*/
+
+   //////////////////////
+           $('#formEditar').validate({
+                        
+                        rules: {
+                             nombre: {
+                                required: true,
+                                lettersonly: true 
+                               },
+                        numcolegiado: {
+                            required: true,
+                                digits: true
+                        },
+                        clinicas:{
+                          required:true
+                        }
+                        },
+        submitHandler: function() {
+
+          idDoctor = $('#idDoctor').val();
+           nombre = $('#nombre').val();
+           numcolegiado = $('#numcolegiado').val();
+           id_clinica = $('#clinicas').val();
+
+
+
+
+           $.ajax({
+               type: 'POST',
+               dataType: 'json',
+               url: 'php/modificar_clinica.php',
+               //lo más cómodo sería mandar los datos mediante 
+               //var data = $( "form" ).serialize();
+               //pero como el php tiene otros nombres de variables, lo dejo así
+               //estos son los datos que queremos actualizar, en json:
+               data: {
+                   idDoctor: idDoctor,
+                   nombre: nombre,
+                   numcolegiado: numcolegiado,
+                   id_clinica:id_clinica
+                   
+               },
+               error: function(xhr, status, error) {
+                   //mostraríamos alguna ventana de alerta con el error
+                    alert(error);
+                    alert(xhr);
+
+                    alert(status);
+
+                   // $('#edicionerr').slideDown(2000).slideUp(2000);
+
+                    $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al editar!"
+
+                },{
+                  type: "danger"
+                });
+
+               },
+               success: function(data) {
+                  var $mitabla =  $("#miTabla").dataTable( { bRetrieve : true } );
+                  $mitabla.fnDraw();
+                 // alert("ok");
+              //  $('#edicionok').slideDown(2000).slideUp(2000);
+
+               
+               
+                 if(data[0].estado==0){
+
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-ok",
+                  message: "Doctor editado correctamente!"
+
+                },{
+                  type: "success"
+                });
+               }else{
+
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al editar el doctor!"
+
+                },{
+                  type: "danger"
+                });
+               }
+
+               },
+               complete: {
+                   //si queremos hacer algo al terminar la petición ajax
+
+               }
+           });
+
+           $('#tabla').fadeIn(100);
+           $('#formulario').fadeOut(100);
+            //$("#edicion").fadeOut(100);
+
+        }
+                       
+   });
+
+
+
+   /*boton enviar del formulario de editar
        $('#enviar').click(function(e) {
            e.preventDefault();
            idDoctor = $('#idDoctor').val();
            nombre = $('#nombre').val();
            numcolegiado = $('#numcolegiado').val();
            id_clinica = $('#clinicas').val();
+
+
 
 
            $.ajax({
@@ -225,14 +355,27 @@
 
                
                
+                 if(data[0].estado==0){
+
                  $.growl({
                   
                   icon: "glyphicon glyphicon-ok",
-                  message: "Edicion correcta!"
+                  message: "Doctor editado correctamente!"
 
                 },{
                   type: "success"
                 });
+               }else{
+
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al editar el doctor!"
+
+                },{
+                  type: "danger"
+                });
+               }
 
                },
                complete: {
@@ -247,17 +390,29 @@
 
 
        });
+   */
 
-/*boton enviar del form crear doctor*/
-     $('#enviarDoc').click(function(e) {
-           e.preventDefault();
-           
-          
-            //$("#edicion").fadeOut(100);
-
+           $('#formCrear').validate({
+                        
+                        rules: {
+                             nombreNuevo: {
+                                required: true,
+                                lettersonly: true 
+                               },
+                        numcolegiadoNuevo: {
+                            required: true,
+                                digits: true
+                        },
+                        clinicas2:{
+                          required:true
+                        }
+                        },
+        submitHandler: function() {
           nombreNuevo = $('#nombreNuevo').val();
           numcolegiadoNuevo = $('#numcolegiadoNuevo').val();
           clinicas2 = $('#clinicas2').val();
+
+
 
            $.ajax({
                type: 'POST',
@@ -270,9 +425,15 @@
                data: {
                    nombreNuevo: nombreNuevo,
                    numcolegiadoNuevo: numcolegiadoNuevo,
-                   clinicas2:clinicas2
+                   clinicas2: clinicas2
                    
-               },
+               },/*}).done(function (data) {
+    alert("bieeeeeeeeeeen");
+}).fail(function(data){
+                  alert("errorrrrrr");
+               });*/
+
+               
                error: function(xhr, status, error) {
                    //mostraríamos alguna ventana de alerta con el error
                     
@@ -282,7 +443,7 @@
                     $.growl({
                   
                   icon: "glyphicon glyphicon-remove",
-                  message: "Error al editar!"
+                  message: "Error al añadir el doctor!"
 
                 },{
                   type: "danger"
@@ -295,14 +456,130 @@
                  // alert("ok");
               //  $('#edicionok').slideDown(2000).slideUp(2000);
                 /*muestro growl*/
+                if(data[0].estado==0){
+
                  $.growl({
                   
                   icon: "glyphicon glyphicon-ok",
-                  message: "Edicion correcta!"
+                  message: "Doctor añadido correctamente!"
 
                 },{
                   type: "success"
                 });
+               }else{
+
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al añadir el doctor!"
+
+                },{
+                  type: "danger"
+                });
+               }
+
+               },
+               complete: {
+                   //si queremos hacer algo al terminar la petición ajax
+
+               }
+           });
+          $('#formularioCrear').fadeOut(100);
+          $('#tabla').fadeIn(100);
+       
+        }
+                       
+   });
+
+/*boton enviar del form crear doctor*/
+/*
+     $('#enviarDoc').click(function(e) {
+           e.preventDefault();
+              
+           $('#formCrear').validate({
+                        
+                        rules: {
+                             nombreNuevo: {
+                                required: true,
+                                lettersonly: true 
+                            },
+                            numcolegiadoNuevo: {
+                                required: true
+                                
+                            }
+                          }
+                        });
+            //$("#edicion").fadeOut(100);
+
+          nombreNuevo = $('#nombreNuevo').val();
+          numcolegiadoNuevo = $('#numcolegiadoNuevo').val();
+          clinicas2 = $('#clinicas2').val();
+
+
+
+           $.ajax({
+               type: 'POST',
+               dataType: 'json',
+               url: 'php/crear_doctor.php',
+               //lo más cómodo sería mandar los datos mediante 
+               //var data = $( "form" ).serialize();
+               //pero como el php tiene otros nombres de variables, lo dejo así
+               //estos son los datos que queremos actualizar, en json:
+               data: {
+                   nombreNuevo: nombreNuevo,
+                   numcolegiadoNuevo: numcolegiadoNuevo,
+                   clinicas2: clinicas2
+                   
+               },/*}).done(function (data) {
+    alert("bieeeeeeeeeeen");
+}).fail(function(data){
+                  alert("errorrrrrr");
+               });*/
+/*
+               
+               error: function(xhr, status, error) {
+                   //mostraríamos alguna ventana de alerta con el error
+                    
+                    
+                   // $('#edicionerr').slideDown(2000).slideUp(2000);
+
+                    $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al añadir el doctor!"
+
+                },{
+                  type: "danger"
+                });
+
+               },
+               success: function(data) {
+                  var $mitabla =  $("#miTabla").dataTable( { bRetrieve : true } );
+                  $mitabla.fnDraw();
+                 // alert("ok");
+              //  $('#edicionok').slideDown(2000).slideUp(2000);
+                /*muestro growl*//*
+                if(data[0].estado==0){
+
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-ok",
+                  message: "Doctor añadido correctamente!"
+
+                },{
+                  type: "success"
+                });
+               }else{
+
+                 $.growl({
+                  
+                  icon: "glyphicon glyphicon-remove",
+                  message: "Error al añadir el doctor!"
+
+                },{
+                  type: "danger"
+                });
+               }
 
                },
                complete: {
@@ -313,7 +590,7 @@
           $('#formularioCrear').fadeOut(100);
           $('#tabla').fadeIn(100);
 
-       });
+       });*/
 
    /*boton añadir doctor,oculto tabla para mostrar form*/
    $('#creaDoc').click(function(e) {
@@ -385,17 +662,16 @@
                }
            });
        }
+
+
+    
+
+
+          
        
    });
     
-/*
-   $('#nombre').focusout(function() {
-        var nombre= $('#nombre').val();
-             alert(nombre);
-              
 
-            });
-*/
    /* En http://www.datatables.net/reference/option/ hemos encontrado la ayuda necesaria
    para utilizar el API de datatables para el render de los botones */
    /* Para renderizar los botones según bootstrap, la url es esta: 
