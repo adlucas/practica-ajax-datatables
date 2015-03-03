@@ -5,7 +5,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
 }, "Solo letras por favor");
 
 
-
+var idDoctor;
 
 
    $(document).ready(function() {
@@ -127,8 +127,11 @@ $.validator.addMethod("lettersonly", function(value, element) {
 
        $('#miTabla').on('click', '.borrarbtn', function(e) {
            //e.preventDefault();
+                    var nRow = $(this).parents('tr')[0];
+           var aData = miTabla.row(nRow).data();
+           idDoctor = aData.idDoctor;
 
-
+           alert(idDoctor);
            //$('#tabla').fadeOut(100);
         //   $('#basicModal').fadeIn(100);
            //$('#basicModal').show();
@@ -137,9 +140,15 @@ $.validator.addMethod("lettersonly", function(value, element) {
          //    $('#basicModal').on('click', '#confBorrar', function(e) {
              //  e.preventDefault();
 
-           var nRow = $(this).parents('tr')[0];
-           var aData = miTabla.row(nRow).data();
-           var idDoctor = aData.idDoctor;
+          
+  // });
+
+       });
+
+       $('#basicModal').on('click','#confBorrar',function(e){
+        alert(idDoctor);
+
+
 
           
            
@@ -191,8 +200,7 @@ $.validator.addMethod("lettersonly", function(value, element) {
                    //si queremos hacer algo al terminar la petición ajax
                }
            });
-  // });
-
+        $('#tabla').fadeIn(100);
        });
 
    //////////////////////
